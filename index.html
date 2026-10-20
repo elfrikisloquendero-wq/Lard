@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#17120e">
+<title>La Brújula del Primer Navegante</title>
+<style>
+  :root{
+    --ink:#21180f; --paper:#d8c49a; --paper-light:#efe0b8;
+    --gold:#c49a4a; --gold-light:#efd18a; --sea:#101c20;
+    --muted:#756346; --red:#792f25;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; min-height:100vh; color:var(--ink);
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(169,128,61,.18), transparent 35%),
+      radial-gradient(ellipse at 90% 80%, rgba(0,0,0,.55), transparent 40%),
+      repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 4px),
+      #17120e;
+    font-family:Georgia,"Times New Roman",serif;
+    display:flex; justify-content:center; align-items:center; padding:24px 14px;
+  }
+  .shell{width:min(900px,100%); position:relative}
+  .frame{
+    position:relative; overflow:hidden; padding:clamp(22px,5vw,54px);
+    border:1px solid #8b6a37; outline:5px solid rgba(196,154,74,.08);
+    background:
+      linear-gradient(120deg,rgba(255,255,255,.12),transparent 24%,rgba(88,55,22,.07) 70%,rgba(255,255,255,.08)),
+      radial-gradient(ellipse at 50% 0%,#f0dfb6,#d4bd8b 68%,#b69b67);
+    box-shadow:0 25px 90px #000b, inset 0 0 45px #6c4c223b;
+  }
+  .frame:before,.frame:after{content:"✦";position:absolute;color:#7b5c2e;font-size:24px;opacity:.75}
+  .frame:before{top:14px;left:17px}.frame:after{right:17px;bottom:14px}
+  .topline{text-align:center;letter-spacing:.22em;text-transform:uppercase;font-size:.72rem;color:#73562c}
+  h1{text-align:center;font-weight:normal;line-height:1.12;font-size:clamp(2.05rem,6vw,4.2rem);margin:17px 0 8px;text-shadow:0 1px #fff4}
+  .subtitle{text-align:center;font-style:italic;color:#685234;margin:0 auto 26px;max-width:600px;line-height:1.6}
+  .divider{display:flex;align-items:center;gap:12px;justify-content:center;color:#8c682f;margin:22px 0}
+  .divider:before,.divider:after{content:"";height:1px;background:#8c682f88;max-width:150px;flex:1}
+  .compass-wrap{display:flex;justify-content:center;margin:10px auto 24px}
+  .compass{
+    width:130px;height:130px;border-radius:50%;border:3px double #76552a;
+    display:grid;place-items:center;position:relative;
+    background:radial-gradient(circle,#ead8aa 0 48%,#a17c42 49% 51%,#d6c08f 52% 100%);
+    box-shadow:0 0 0 7px #a7894c30, inset 0 0 15px #4c321d55;
+    animation:float 4s ease-in-out infinite;
+  }
+  .compass:before{content:"";position:absolute;inset:9px;border:1px solid #76552a88;border-radius:50%}
+  .needle{font-size:66px;line-height:1;color:#7c2f24;text-shadow:1px 1px #f5d995;transform:rotate(28deg)}
+  .card{border:1px solid #8a6b3d88;background:#fff4d322;padding:clamp(18px,4vw,30px);margin-top:18px;box-shadow:inset 0 0 22px #7755290d}
+  .eyebrow{text-transform:uppercase;letter-spacing:.18em;font-size:.72rem;color:#785a2d;margin:0 0 12px}
+  h2{font-weight:normal;font-size:clamp(1.35rem,4vw,2rem);margin:0 0 14px;line-height:1.25}
+  p{line-height:1.75}
+  .prophecy{font-size:clamp(1.05rem,2.7vw,1.28rem);line-height:1.9;font-style:italic;text-align:center}
+  .question{font-size:1.12rem;line-height:1.65}
+  .answers{display:grid;gap:10px;margin:20px 0 8px}
+  button{
+    font:inherit;cursor:pointer;border:1px solid #87683a;background:#35281b;color:#f2dfb4;
+    padding:13px 16px;line-height:1.4;transition:transform .15s,background .15s,border-color .15s;
+  }
+  button:hover{background:#4a3521;border-color:#d2ac60;transform:translateY(-1px)}
+  button:focus-visible,input:focus-visible{outline:3px solid #8d5f22;outline-offset:3px}
+  button.secondary{background:transparent;color:#3c2c19}
+  button.secondary:hover{background:#ffffff35}
+  .answer-input{width:100%;padding:14px 13px;background:#f2e4c4;border:1px solid #8b6a37;color:#21180f;font:inherit;font-size:1rem}
+  .action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .action-row button{flex:1}
+  .feedback{min-height:28px;margin:12px 0 0;font-style:italic;color:#6c2e23}
+  .success{color:#31512c}
+  .hidden{display:none!important}
+  .progress{display:flex;gap:7px;justify-content:center;margin:22px 0}
+  .dot{width:9px;height:9px;border-radius:50%;border:1px solid #826333;background:transparent}
+  .dot.active{background:#826333}
+  .final-phrase{font-size:clamp(1.55rem,5vw,2.5rem);line-height:1.35;text-align:center;color:#4b2c16;margin:24px 0}
+  .seal{width:90px;height:90px;border-radius:50%;margin:20px auto;display:grid;place-items:center;border:3px double #7b3024;color:#7b3024;font-size:2.7rem;transform:rotate(-10deg);box-shadow:0 0 0 5px #7b302415}
+  .foot{text-align:center;color:#6f542f;font-size:.8rem;line-height:1.6;margin-top:26px}
+  .small{font-size:.9rem;color:#685234}
+  @keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-5px) rotate(2deg)}}
+  @keyframes appear{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+  .card:not(.hidden){animation:appear .45s ease both}
+  @media(max-width:520px){body{padding:10px}.frame{padding:25px 17px}.compass{width:108px;height:108px}.needle{font-size:54px}.topline{letter-spacing:.12em}}
+  @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="shell">
+  <div class="frame">
+    <div class="topline">Archivo prohibido · Carta del Primer Navegante</div>
+    <h1>La Brújula<br>del Primer Navegante</h1>
+    <p class="subtitle">Una reliquia más antigua que los mapas, más fiel que las estrellas y más peligrosa que cualquier maldición.</p>
+    <div class="compass-wrap" aria-hidden="true"><div class="compass"><span class="needle">✦</span></div></div>
+
+    <section class="card" id="intro">
+      <p class="eyebrow">Advertencia para quien encuentre esta página</p>
+      <p class="prophecy">«Antes de que los hombres conocieran las estrellas, antes de que el mar tuviera nombre y el tiempo comenzara a contar sus días, existió una brújula que jamás señaló el norte.</p>
+      <p class="prophecy">Los codiciosos buscaron oro. Los reyes, poder. Los viajeros, un destino. Pero todos ignoraban el secreto que aquella reliquia guardaba.</p>
+      <p class="prophecy">Su aguja no obedece al cielo ni a la tierra. Señala aquello que su portador desea encontrar por encima de todo lo demás».</p>
+      <div class="divider">✧ ✧ ✧</div>
+      <p style="text-align:center">Tres pruebas te separan del secreto. No respondas con lo que el mundo espera de ti. Responde con aquello que la brújula busca.</p>
+      <div class="action-row"><button id="begin">Comenzar la iniciación</button></div>
+    </section>
+
+    <section class="card hidden" id="stage1">
+      <p class="eyebrow">Primera prueba · La reliquia</p>
+      <h2>¿Qué clase de brújula es esta?</h2>
+      <p class="question">Su aguja no señala el norte, ni obedece a las estrellas. ¿Qué es lo que la hace diferente de cualquier brújula común?</p>
+      <div class="answers">
+        <button data-stage="1" data-answer="a">A. Siempre señala el tesoro más cercano.</button>
+        <button data-stage="1" data-answer="b">B. Señala aquello que más desea su portador.</button>
+        <button data-stage="1" data-answer="c">C. Muestra el camino más seguro a casa.</button>
+      </div>
+      <p class="feedback" id="feedback1" aria-live="polite"></p>
+      <div class="progress"><span class="dot active"></span><span class="dot"></span><span class="dot"></span></div>
+    </section>
+
+    <section class="card hidden" id="stage2">
+      <p class="eyebrow">Segunda prueba · La voluntad</p>
+      <h2>La aguja no puede mentir</h2>
+      <p class="prophecy">«Quien busca oro encontrará codicia. Quien busca poder encontrará cadenas. Quien busca un camino encontrará una dirección. Pero quien conoce su verdadero anhelo no necesita que el mundo le diga adónde ir».</p>
+      <p class="question">Entonces, ¿qué debe descubrir el navegante para comprender hacia dónde lo guía la brújula?</p>
+      <div class="answers">
+        <button data-stage="2" data-answer="a">A. Lo que los demás esperan que consiga.</button>
+        <button data-stage="2" data-answer="b">B. El lugar donde se oculta el oro más antiguo.</button>
+        <button data-stage="2" data-answer="c">C. Su deseo más verdadero, incluso si teme reconocerlo.</button>
+      </div>
+      <p class="feedback" id="feedback2" aria-live="polite"></p>
+      <div class="progress"><span class="dot"></span><span class="dot active"></span><span class="dot"></span></div>
+    </section>
+
+    <section class="card hidden" id="stage3">
+      <p class="eyebrow">Tercera prueba · La llave</p>
+      <h2>Completa la profecía</h2>
+      <p class="prophecy">«La brújula no señala el norte, sino aquello que más anhela tu…»</p>
+      <p class="question">Escribe la palabra que completa la sentencia y abre el último sello.</p>
+      <form id="finalForm">
+        <input class="answer-input" id="finalAnswer" type="text" autocomplete="off" placeholder="¿Qué anhela tu…?" aria-label="Respuesta final">
+        <div class="action-row"><button type="submit">Revelar el secreto</button><button class="secondary" type="button" id="hint">Pedir una pista</button></div>
+      </form>
+      <p class="feedback" id="feedback3" aria-live="polite"></p>
+      <p class="small hidden" id="hintText">Pista: no es una parte del mapa ni una estrella del cielo. Es el lugar simbólico donde viven tus sentimientos y deseos más profundos.</p>
+      <div class="progress"><span class="dot"></span><span class="dot"></span><span class="dot active"></span></div>
+    </section>
+
+    <section class="card hidden" id="ending">
+      <p class="eyebrow" style="text-align:center">El sello ha sido abierto</p>
+      <div class="seal" aria-hidden="true">♥</div>
+      <h2 style="text-align:center">Has comprendido la voluntad de la brújula</h2>
+      <p class="final-phrase">«Aquello que más anhela tu corazón».</p>
+      <div class="divider">✧ ✧ ✧</div>
+      <p class="prophecy">«El norte guía a los perdidos. Las estrellas guían a los soñadores. Los mapas guían a quienes creen conocer el mundo.</p>
+      <p class="prophecy">Pero la brújula más antigua no señala dónde debes ir. Señala aquello por lo que estarías dispuesto a desafiar al mismísimo abismo.</p>
+      <p class="prophecy">Ya conoces su secreto, navegante. Recuerda: encontrar la llave no significa que el mundo te deba el tesoro. Significa que has aprendido qué buscas».</p>
+<p class="prophecy">Y ahi es donde yase la respuesta, porque la brujula no apuntaba al norte... "La brujula simpre apuntará hacia aquello que más deseas".».</p>
+      <p style="text-align:center;margin-top:26px"><strong>Ahora sabes la respuetas..</strong></p>
+      <div class="action-row"><button class="secondary" id="restart">Volver a comenzar</button></div>
+    </section>
+    <div class="foot">FIN DEL FRAGMENTO · CONSERVA EL SECRETO<br>Una leyenda no se encuentra: se descifra.</div>
+  </div>
+</main>
+<script>
+  const sections = ["intro", "stage1", "stage2", "stage3", "ending"];
+  function show(id) {
+    sections.forEach(section => document.getElementById(section).classList.toggle("hidden", section !== id));
+    window.scrollTo({top: 0, behavior: "smooth"});
+  }
+  document.getElementById("begin").addEventListener("click", () => show("stage1"));
+
+  document.querySelectorAll("button[data-stage]").forEach(button => {
+    button.addEventListener("click", () => {
+      const stage = button.dataset.stage;
+      const answer = button.dataset.answer;
+      const correct = (stage === "1" && answer === "b") || (stage === "2" && answer === "c");
+      const feedback = document.getElementById("feedback" + stage);
+      if (!correct) {
+        feedback.textContent = stage === "1"
+          ? "La aguja permanece inmóvil. Piensa en la brújula de la leyenda: no busca un objeto, sino algo personal."
+          : "La brújula no obedece a la ambición ajena. Inténtalo de nuevo y busca la respuesta dentro del navegante.";
+        feedback.classList.remove("success");
+        return;
+      }
+      feedback.textContent = "La aguja despierta. Has demostrado comprender la primera verdad.";
+      feedback.classList.add("success");
+      setTimeout(() => show(stage === "1" ? "stage2" : "stage3"), 700);
+    });
+  });
+
+  document.getElementById("finalForm").addEventListener("submit", event => {
+    event.preventDefault();
+    const answer = document.getElementById("finalAnswer").value
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toLowerCase();
+    const feedback = document.getElementById("feedback3");
+    if (answer === "corazon" || answer === "mi corazon" || answer === "el corazon") {
+      feedback.textContent = "El último sello cede. La reliquia reconoce tu respuesta…";
+      feedback.classList.add("success");
+      setTimeout(() => show("ending"), 900);
+    } else {
+      feedback.textContent = "El sello permanece cerrado. Lee la profecía otra vez y escucha lo que dice la aguja.";
+      feedback.classList.remove("success");
+    }
+  });
+
+  document.getElementById("hint").addEventListener("click", () => {
+    document.getElementById("hintText").classList.toggle("hidden");
+  });
+  document.getElementById("restart").addEventListener("click", () => {
+    document.getElementById("finalAnswer").value = "";
+    document.getElementById("feedback1").textContent = "";
+    document.getElementById("feedback2").textContent = "";
+    document.getElementById("feedback3").textContent = "";
+    document.getElementById("hintText").classList.add("hidden");
+    show("intro");
+  });
+</script>
+</body>
+</html>
